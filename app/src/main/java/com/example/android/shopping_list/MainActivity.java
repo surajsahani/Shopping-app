@@ -1,8 +1,10 @@
 package com.example.android.shopping_list;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +12,7 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
+    private EditText mLocationEditText;
     public static final int TEXT_REQUEST = 1;
     private ShopList items = new ShopList();
     public MainActivity() {
@@ -19,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mLocationEditText = findViewById(R.id.location_edittext);
 
         if ((savedInstanceState != null)&& (savedInstanceState.getSerializable("list")!= null)){
             HashMap<String, Integer> l = (HashMap<String, Integer>)savedInstanceState.getSerializable("list");
@@ -63,6 +67,18 @@ public class MainActivity extends AppCompatActivity {
             for (String k : l.keySet()) {
                 String s = l.get(k).toString()+ " " + k + "\n";
                 tv.setText(tv.getText() + s);
+        }
+    }
+
+    public void openLocation(View view) {
+        String loc = mLocationEditText.getText().toString();
+        Uri addressUri = Uri.parse("geo:0?0=" + loc);
+        Intent intent = new Intent(Intent.ACTION_VIEW, addressUri);
+
+        if (intent.resolveActivity(getPackageManager()) !=null) {
+            startActivity(intent);
+        } else {
+            Log.d("ImplicitIntents", "Can't handle this intent");
         }
     }
 }
